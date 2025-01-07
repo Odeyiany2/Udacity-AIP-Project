@@ -128,7 +128,7 @@ def train_evaluate_model(model, train_loader, valid_loader, criterion, optimizer
                 equals = top_class == labels.view(*top_class.shape)
                 accuracy += torch.mean(equals.type(torch.FloatTensor)).item()
 
-        print("Epoch: {}/{}.. ".format(e+1, epochs),
+        print("Epoch: {}/{}.. ".format(epoch+1, epochs),
               "Training Loss: {:.3f}.. ".format(train_loss/len(train_dataloader)),
               "Validation Loss: {:.3f}.. ".format(val_loss/len(val_dataloader)),
               "Validation Accuracy: {:.3f}".format(accuracy/len(val_dataloader)))
