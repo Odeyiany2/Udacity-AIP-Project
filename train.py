@@ -96,7 +96,7 @@ def train_evaluate_model(model, train_loader, valid_loader, criterion, optimizer
     for epoch in range(epochs):
         model.train()
         train_loss = 0
-        for inputs, labels in train_dataloader:
+        for inputs, labels in train_loader:
             inputs, labels = inputs.to(device), labels.to(device)
 
             optimizer.zero_grad()
@@ -115,8 +115,8 @@ def train_evaluate_model(model, train_loader, valid_loader, criterion, optimizer
         val_loss = 0
         accuracy = 0
         with torch.no_grad():
-            for inputs, labels in val_dataloader:
-            inputs, labels = inputs.to(device), labels.to(device)
+            for inputs, labels in valid_loader:
+                inputs, labels = inputs.to(device), labels.to(device)
                 outputs = model(inputs)
                 loss = criterion(outputs, labels)
                 #update loss
@@ -129,9 +129,9 @@ def train_evaluate_model(model, train_loader, valid_loader, criterion, optimizer
                 accuracy += torch.mean(equals.type(torch.FloatTensor)).item()
 
         print("Epoch: {}/{}.. ".format(epoch+1, epochs),
-              "Training Loss: {:.3f}.. ".format(train_loss/len(train_dataloader)),
-              "Validation Loss: {:.3f}.. ".format(val_loss/len(val_dataloader)),
-              "Validation Accuracy: {:.3f}".format(accuracy/len(val_dataloader)))
+              "Training Loss: {:.3f}.. ".format(train_loss/len(train_loader)),
+              "Validation Loss: {:.3f}.. ".format(val_loss/len(valid_loader)),
+              "Validation Accuracy: {:.3f}".format(accuracy/len(valid_loader)))
 
 #function to save checkpoint
 def save_checkpoint(model, optimizer, class_to_idx, save_dir, epochs):
@@ -144,38 +144,55 @@ def save_checkpoint(model, optimizer, class_to_idx, save_dir, epochs):
     torch.save(checkpoint, save_dir)
     print(f"Checkpoint saved to {save_dir}")
     
-#main function 
+# Main function
 def main():
-    if architecture == "efficientnet_b0":
-        default_hidden_units = [1024, 512, 256, 128]
-    elif architecture == "resnet18":
-        default_hidden_units = [512, 256, 128, 64]
-    parser = argparser.ArgumentParser(description = "Train a new neural network: Image Classifier")
+    parser = argparse.ArgumentParser(description="Train a new neural network: Image Classifier")
     parser.add_argument('data_dir', type=str, help="Directory of training data")
     parser.add_argument('--save_dir', type=str, default='checkpoint.pth', help="Save directory for checkpoint")
     parser.add_argument('--architecture', type=str, default='efficientnet_b0', choices=['efficientnet_b0', 'resnet18'], help="Model architecture")
     parser.add_argument('--epochs', type=int, default=5, help="Number of epochs")
     parser.add_argument('--learning_rate', type=float, default=0.001, help="Learning rate")
+    parser.add_argument('--gpu', action='store_true', help="Use GPU for training")
+
+    args = parser.parse_args()
+
+    # Determine default hidden units based on the architecture
+    if args.architecture == "efficientnet_b0":
+        default_hidden_units = [1024, 512, 256, 128]
+    elif args.architecture == "resnet18":
+        default_hidden_units = [512, 256, 128, 64]
+    
+    # Add hidden unit arguments with architecture-specific defaults
     parser.add_argument('--hidden_units1', type=int, default=default_hidden_units[0], help="First layer of Hidden units")
     parser.add_argument('--hidden_units2', type=int, default=default_hidden_units[1], help="Second layer of Hidden units")
     parser.add_argument('--hidden_units3', type=int, default=default_hidden_units[2], help="Third layer of Hidden units")
     parser.add_argument('--hidden_units4', type=int, default=default_hidden_units[3], help="Final layer of Hidden units")
     parser.add_argument('--output_size', type=int, default=102, help="Output size (number of classes)")
-    parser.add_argument('--gpu', action='store_true', help="Use GPU for training")
 
+    # Re-parse args after adding dynamic arguments
     args = parser.parse_args()
+
+    # Set the device
     device = "cuda" if args.gpu and torch.cuda.is_available() else "cpu"
-    
+
+    # Load data
     train_loader, valid_loader, class_to_idx = load_data(args.data_dir)
-    model = build_model(args.architecture, args.output_size, args.hidden_units1, args.hidden_units2, args.hidden_units3, args.hidden_units4)
+
+    # Build model
+    model = build_model(
+        args.architecture, args.output_size,
+        args.hidden_units1, args.hidden_units2, args.hidden_units3, args.hidden_units4
+    )
+
+    # Set optimizer and loss function
     optimizer = optim.Adam(model.classifier.parameters(), lr=args.learning_rate)
     criterion = nn.NLLLoss()
 
+    # Train and evaluate the model
     train_evaluate_model(model, train_loader, valid_loader, criterion, optimizer, args.epochs, device)
+
+    # Save checkpoint
     save_checkpoint(model, optimizer, class_to_idx, args.save_dir, args.epochs)
 
 if __name__ == '__main__':
     main()
-
-            
-    
