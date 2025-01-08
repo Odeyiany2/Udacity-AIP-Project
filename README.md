@@ -1,4 +1,4 @@
-# **Udacity-AIP-Project**
+# **Udacity-AIP-Project: Image Classifier**
 This is my final project submission for the Udacity's AWS Nanodegree program -- AI Programming with Python. The goal is to build an AI application that can predict the class of a flower. The dataset provided was split into three parts: [train, valid and test](https://www.kaggle.com/datasets/yousefmohamed20/oxford-102-flower-dataset) The training data has 102 categories of flowers.  
 
 ## **Deliverables**
