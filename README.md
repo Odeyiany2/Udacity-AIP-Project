@@ -32,3 +32,8 @@ The project is divided into two parts:
 ## **Frameworks**
 1. **Python**
 2. **Pytorch** 
+
+
+
+## **[Graduation](http://www.udacity.com/certificate/e/1a0c7ff2-8b40-11ef-b263-8b0cd5ce9d4d)**
+![certificate](https://github.com/Odeyiany2/Udacity-AIP-Project/blob/main/Screenshot%202025-01-08%20092307.png)
