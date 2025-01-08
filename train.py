@@ -154,22 +154,23 @@ def main():
     parser.add_argument('--learning_rate', type=float, default=0.001, help="Learning rate")
     parser.add_argument('--gpu', action='store_true', help="Use GPU for training")
 
-    args = parser.parse_args()
+    #known arguments parsed first to determine architecture
+    args, unknown_args = parser.parse_known_args()
 
-    # Determine default hidden units based on the architecture
+    # Set default hidden units based on architecture
     if args.architecture == "efficientnet_b0":
         default_hidden_units = [1024, 512, 256, 128]
     elif args.architecture == "resnet18":
         default_hidden_units = [512, 256, 128, 64]
-    
-    # Add hidden unit arguments with architecture-specific defaults
+
+    # Add hidden unit arguments after determining architecture defaults
     parser.add_argument('--hidden_units1', type=int, default=default_hidden_units[0], help="First layer of Hidden units")
     parser.add_argument('--hidden_units2', type=int, default=default_hidden_units[1], help="Second layer of Hidden units")
     parser.add_argument('--hidden_units3', type=int, default=default_hidden_units[2], help="Third layer of Hidden units")
     parser.add_argument('--hidden_units4', type=int, default=default_hidden_units[3], help="Final layer of Hidden units")
     parser.add_argument('--output_size', type=int, default=102, help="Output size (number of classes)")
 
-    # Re-parse args after adding dynamic arguments
+    # Reparse all arguments after adding hidden units
     args = parser.parse_args()
 
     # Set the device
