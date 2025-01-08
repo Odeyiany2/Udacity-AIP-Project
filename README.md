@@ -5,7 +5,7 @@ This is my final project submission for the Udacity's AWS Nanodegree program -- 
 
 The project is divided into two parts:
 
-* **Part One:** This aspects builds the neural network using the one pytorch's pretrained vision model, [Efficientnet](https://pytorch.org/vision/stable/models/efficientnet.html), in a jupyter notebook. Deliverables in this part include:
+* **Part One:** This aspects builds the neural network using the one pytorch's pretrained vision model, [Efficientnet](https://pytorch.org/vision/stable/models/efficientnet.html) and [ResNet](https://pytorch.org/vision/stable/models/resnet.html), in a jupyter notebook. Deliverables in this part include:
   
    - Training Data Augmentation: used torchvision transforms to augment the training data with random scaling, rotations, mirroring, and/or cropping.
    - Data Normalization: the training, validation, and testing data were appropriately cropped and normalized.
